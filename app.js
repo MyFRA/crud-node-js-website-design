@@ -4,11 +4,19 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const handlebars = require('express-handlebars')
+var flash = require('express-flash');
+const session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var registerRouter = require('./routes/registerRouter');
+var loginRouter = require('./routes/loginRouter');
+const app = express();
 
-var app = express();
+app.use(cookieParser('keyboard cat'));
+app.use(session({cookie: { maxAge: 60000 }}));
+app.use(flash());
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,9 +31,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var db = require('./config/db');
-
 app.use('/', indexRouter);
+app.use('/user/register', registerRouter);
+app.use('/user/login', loginRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -46,4 +54,4 @@ app.use(function(err, req, res, next) {
 
 app.listen(8000);
 
-module.exports = app;
+// module.exports = app;
